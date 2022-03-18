@@ -1,14 +1,14 @@
 from typing import Optional
 
 
-def get_topics(username: str) -> Optional[list]:
+def get_topics(username: str) -> list:
     """
     Function for getting topics of the author
     :param username: author's username
     :return: list of author's topics or None
     """
     # get from DB
-    topics = None
+    topics = list()
     return topics
 
 

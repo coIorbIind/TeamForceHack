@@ -30,7 +30,7 @@ def topics_keyboard(topics: list) -> ReplyKeyboardMarkup:
     return keyboard
 
 
-def change_addressees(flag: bool) -> ReplyKeyboardMarkup:
+def change_addressees_keyboard(flag: bool) -> ReplyKeyboardMarkup:
     """
     Keyboard for changing addressees of topic
     :param flag: if flag is True we can delete users, else addressees are top

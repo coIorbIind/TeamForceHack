@@ -2,7 +2,7 @@ from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram import types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
-from keyboards.keyboards import main_keyboard, topics_keyboard
+from keyboards.keyboards import main_keyboard, topics_keyboard, change_addressees_keyboard
 from functions import functions
 
 
@@ -38,10 +38,10 @@ async def view_topics(message: types.Message) -> None:
     :param message: message from user
     """
     topics = functions.get_topics(message.from_user.username)
-    if topics is None:
-        await message.answer("Вы не создали ещё ни одной темы")
-    else:
+    if len(topics):
         await message.answer("Список ваших статей", reply_markup=topics_keyboard(topics))
+    else:
+        await message.answer("Вы ещё не создали ни одной темы")
 
 
 async def change_addressees(message: types.Message) -> None:
@@ -61,15 +61,32 @@ async def enter_topic_for_change(message: types.Message, state: FSMContext) -> N
     :param state: form state
     """
     topic = message.text
-    if topic in functions.get_topics(message.from_user.username):
-        async with state.proxy() as data:
-            data['topic_name'] = message.text
+    topics = functions.get_topics(message.from_user.username)
+    if len(topics):
+        if topic in topics:
+            async with state.proxy() as data:
+                data['topic_name'] = message.text
 
-        addressees = functions.get_addressees(data['topic_name'])
+            addressees = functions.get_addressees(data['topic_name'])
+            if len(addressees):
+                text = ""
+                for address in addressees:
+                    text += f"{address}\n"
 
-        await state.finish()
+                await message.answer(text)
+
+                await message.answer("Выберите действия на клавиатуре", reply_markup=change_addressees_keyboard(flag=True))
+            else:
+                await message.answer("В данной теме нет адресатов")
+                await message.answer("Выберите \"Добавить\" на клавиатуре",
+                                     reply_markup=change_addressees_keyboard(flag=False))
+
+            await state.finish()
+        else:
+            await message.answer("У Вас нет такой темы")
+            return
     else:
-        await message.answer("У Вас нет такой темы")
+        await message.answer("Вы ещё не создали ни одной темы")
         return
 
 
@@ -139,6 +156,7 @@ async def cancel_handler(message: types.Message, state: FSMContext) -> None:
 def register_admin_handlers(dp: Dispatcher) -> None:
     dp.register_message_handler(view_topics, lambda message: message.text == "Просмотреть все свои темы")
     dp.register_message_handler(create_topic, lambda message: message.text == "Добавить топик")
+    dp.register_message_handler(enter_topic_for_change, lambda message: message.text == "Изменить адресатов")
     dp.register_message_handler(enter_name, state=CreateTopicForm.topic_name)
     dp.register_message_handler(enter_message, state=CreateTopicForm.message)
     dp.register_message_handler(enter_addressees, state=CreateTopicForm.addressees)
