@@ -8,7 +8,8 @@ from sys import exit
 
 
 from handlers import other, client
-from config import load_config, BotConfig
+from config import load_config
+from config_classes import BotConfig
 
 
 async def on_startup(_) -> None:
@@ -33,7 +34,7 @@ def main():
     # bot_token = os.getenv("TOKEN")
     # if not bot_token:
     #     exit("[ERROR] No token provided")
-    bot_config_instance = load_config("config.cfg", "=")
+    bot_config_instance = load_config("config.cfg", BotConfig, "=")
     if bot_config_instance is None:
         exit("[ERROR] No token provided")
 

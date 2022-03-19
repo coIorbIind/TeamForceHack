@@ -1,4 +1,4 @@
-from typing import Optional
+
 
 
 def get_topics(username: str) -> list:
@@ -23,3 +23,20 @@ def get_addressees(topic: str) -> list:
     if addressees is None:
         addressees = list()
     return addressees
+
+
+def create_topic(username: str, topic_name: str, addressees: list) -> bool:
+    """
+    Function for creating new topic
+    :param username: author's username
+    :param topic_name: name of new topic
+    :param addressees: addressees for mailing
+    :return: True - if topic was created, else - if it wasn't
+    """
+    # get ot create author user
+
+    for address in addressees:
+        pass
+        #  get ot create address user
+
+    # create topic
