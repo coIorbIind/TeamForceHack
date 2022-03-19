@@ -1,22 +1,15 @@
 from typing import Optional
 
 
-class BotConfig:
-    """
-    Class for keeping config data
-    """
-    bot_token = None
-    # можно добавить валидацию по размеру
-
-
-def load_config(path: str, delimiter: str = ':') -> Optional[BotConfig]:
+def load_config(path: str, target_class: type, delimiter: str = ':') -> Optional:
     """
     Function for loading config file
     :param path: path to config file
+    :param target_class: class which will be filled
     :param delimiter: delimiter for data in config file
     :return: instance of BotConfig class or None if there were errors while reading the file
     """
-    result = BotConfig()
+    result = target_class()
 
     try:
         with open(path) as file:
