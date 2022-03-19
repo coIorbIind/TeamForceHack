@@ -4,18 +4,12 @@ from sqlalchemy import Column, Integer, Text, ForeignKey, PrimaryKeyConstraint, 
 from config_classes import DBConfig
 from config import load_config
 
-db_config = load_config("db_cfg.cfg", DBConfig, '=')
+db_config = load_config("database/db_cfg.cfg", DBConfig, '=')
 
 engine = create_engine(db_config.conn_str)
 
 Base = declarative_base()
 
-
-# class TopicUser(Base):  # Connects audience and user accounts
-#     __tablename__ = "topic_user"
-#     id = Column(Integer, primary_key=True)
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     topic_id = Column(Integer, ForeignKey('topics.id'))
 
 topic_user = Table(
     'topic_user',

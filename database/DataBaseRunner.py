@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-import db_entities as dbe
+import database.db_entities as dbe
 from sqlalchemy.orm import Session
 
 
@@ -75,6 +75,8 @@ class DataBaseRunner:
             author=author,
             addressees=audience,
         )
+
+        self.session.add(topic)
         self.session.commit()
 
     def add_message(self, message: str, topic_name: str, username: str) -> bool:
@@ -96,10 +98,43 @@ class DataBaseRunner:
             sender=sender,
             topic=topic
         )
+        self.session.add(message_instance)
+        self.session.commit()
 
         return True
 
+    def add_addressees(self, topic_name: str, addressees: list):
+        """
+        Function for adding new members to the audience
+        :param topic_name: name of topic
+        :param addressees: new addressees for mailing
+        """
+        audience = list()
+        app = audience.append
 
+        for address in addressees:
+            app(self.get_or_create(model=dbe.User, tgm_link=address))
+
+        topic = self.session.query(dbe.Topic).filter(dbe.Topic.name == topic_name).first()
+
+        topic.addressees.append(audience)
+
+        self.session.add(topic)
+        self.session.commit()
+
+    def delete_addressees(self, topic_name: str, addressees: list):
+        """
+        Function for deleting members from the audience
+        :param topic_name: name of topic
+        :param addressees: addressees for deleting
+        """
+
+        topic = self.session.query(dbe.Topic).filter(dbe.Topic.name == topic_name).first()
+
+        self.session.add(topic)
+        self.session.commit()
+
+
+#
 # dbr = DataBaseRunner()
-# print(dbr.get_or_create(dbe.User, tgm_link="asdas"))
-# print(dbr.get_topics(username="Author"))
+# dbr.create_topic("a", "b", ["1", "2"])

@@ -27,6 +27,7 @@ def topics_keyboard(topics: list) -> ReplyKeyboardMarkup:
     for item in topics:
         keyboard.add(KeyboardButton(item))
 
+    keyboard.add((KeyboardButton("Выйти")))
     return keyboard
 
 
@@ -39,10 +40,10 @@ def change_addressees_keyboard(flag: bool) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 
     if flag:
-        delete_button = KeyboardButton("Удалить получателя")
+        delete_button = KeyboardButton("Удалить получателей")
         keyboard.add(delete_button)
 
-    add_button = KeyboardButton("Добавить получателя")
+    add_button = KeyboardButton("Добавить получателей")
 
     keyboard.add(add_button)
 

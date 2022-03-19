@@ -1,4 +1,6 @@
 .idea
 __pycache__/
 config.cfg
-
+database/sqlite3.db
+database/db_cfg.cfg
+sqlite3.db

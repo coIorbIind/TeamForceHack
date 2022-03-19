@@ -2,6 +2,7 @@ from aiogram.utils import executor
 from aiogram.dispatcher import Dispatcher
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.utils.exceptions import NetworkError
 
 
 from sys import exit
@@ -47,7 +48,11 @@ def main():
     other.register_other_handlers(dp)
 
     # Запуск поллинга
+    # try:
     executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
+    #
+    # except NetworkError:
+    #     exit("[ERROR] No connection")
 
 
 if __name__ == "__main__":
