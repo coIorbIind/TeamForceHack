@@ -7,4 +7,4 @@ class BotConfig:
 
 
 class DBConfig:
-    conn_str: str
+    conn_str: str = None
