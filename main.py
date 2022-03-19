@@ -3,7 +3,7 @@ from aiogram.dispatcher import Dispatcher
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-import os
+
 from sys import exit
 
 
@@ -30,10 +30,8 @@ def main():
     """
     # Создание хранилища данных
     storage = MemoryStorage()
+
     # Создание бота
-    # bot_token = os.getenv("TOKEN")
-    # if not bot_token:
-    #     exit("[ERROR] No token provided")
     bot_config_instance = load_config("config.cfg", BotConfig, "=")
     if bot_config_instance is None:
         exit("[ERROR] No token provided")

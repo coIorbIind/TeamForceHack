@@ -3,7 +3,6 @@ from aiogram.dispatcher import Dispatcher
 
 
 async def echo_command(message: types.Message) -> None:
-    # print(message.from_user.id)
     await message.answer("Команда не распознана")
 
 

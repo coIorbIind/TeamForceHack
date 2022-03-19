@@ -3,7 +3,9 @@ from aiogram import types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
 from keyboards.keyboards import main_keyboard, topics_keyboard, change_addressees_keyboard
-from functions import functions
+from database.DataBaseRunner import DataBaseRunner
+
+db_runner = DataBaseRunner()
 
 
 class CreateTopicForm(StatesGroup):
@@ -37,7 +39,7 @@ async def view_topics(message: types.Message) -> None:
     Function to view the list of topics
     :param message: message from user
     """
-    topics = functions.get_topics(message.from_user.username)
+    topics = db_runner.get_topics(message.from_user.username)
     if len(topics):
         await message.answer("Список ваших статей", reply_markup=topics_keyboard(topics))
     else:
@@ -61,13 +63,13 @@ async def enter_topic_for_change(message: types.Message, state: FSMContext) -> N
     :param state: form state
     """
     topic = message.text
-    topics = functions.get_topics(message.from_user.username)
+    topics = db_runner.get_topics(message.from_user.username)
     if len(topics):
         if topic in topics:
             async with state.proxy() as data:
                 data['topic_name'] = message.text
 
-            addressees = functions.get_addressees(data['topic_name'])
+            addressees = db_runner.get_addressees(data['topic_name'])
             if len(addressees):
                 text = ""
                 for address in addressees:
@@ -75,7 +77,8 @@ async def enter_topic_for_change(message: types.Message, state: FSMContext) -> N
 
                 await message.answer(text)
 
-                await message.answer("Выберите действия на клавиатуре", reply_markup=change_addressees_keyboard(flag=True))
+                await message.answer("Выберите действия на клавиатуре",
+                                     reply_markup=change_addressees_keyboard(flag=True))
             else:
                 await message.answer("В данной теме нет адресатов")
                 await message.answer("Выберите \"Добавить\" на клавиатуре",
