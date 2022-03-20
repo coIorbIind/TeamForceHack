@@ -12,13 +12,13 @@ global_dispatcher: Dispatcher = None
 global_bot: Bot = None
 
 
-async def show_topics(message: types.Message) -> None:
+async def show_topics(message: types.Message, state: FSMContext) -> None:
     """
     Function to view the list of topics
     :param message: message from user
     """
-    topics = db_runner.get_topics(message.from_user.username)
-    topics += db_runner(get_topic
+    topics = list(db_runner.get_topics(message.from_user.username))
+    topics += db_runner.get_topics_as_addressor(message.from_user.username)
     if topics is None:
         await message.answer("Вы ещё не создали ни одной темы")
     else:
@@ -36,7 +36,7 @@ async def topic_info(message: types.Message, state: FSMContext):
     topic = db_runner.get_topic_by_name(message.text)
 
     async with state.proxy() as data:
-        data['topic'] = topic.name
+        data['topic_name'] = topic.name
 
     if topic is None:
         await message.answer("Тема не найдена")
@@ -51,15 +51,24 @@ async def topic_info(message: types.Message, state: FSMContext):
 
 # async def change
 async def send_message(message: types.Message, state: FSMContext):
-    if message.text == "Отправить сообщение":
-        await ShowTopic.next()
-        await message.answer("Введите текст сообщения для рассылки", reply_markup=types.ReplyKeyboardRemove())
+    async with state.proxy() as data:
+        topic = db_runner.get_topic_by_name(data["topic_name"])
+        if topic.author.tgm_link == message.from_user.username:
+            if message.text == "Отправить сообщение":
+                await ShowTopic.next()
+                await message.answer("Введите текст сообщения для рассылки", reply_markup=types.ReplyKeyboardRemove())
+        else:
+            await message.answer("У Вас нет доступа к данной теме")
+            await state.finish()
+            await AppStates.showing_topics.set()
+            await state.set_state(AppStates.showing_topics)
+            await show_topics(message, state)
 
 
 async def enter_message(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         # print(data)
-        topic = db_runner.get_topic_by_name(data['topic'])
+        topic = db_runner.get_topic_by_name(data['topic_name'])
 
         db_runner.add_message(message.text, topic.name, message.from_user.username)
 
@@ -74,7 +83,8 @@ async def enter_message(message: types.Message, state: FSMContext):
     await message.answer("Сообщение отправлено")
     await state.finish()
     await AppStates.showing_topics.set()
-    await show_topics(message, AppStates.showing_topics)
+    await state.set_state(AppStates.showing_topics)
+    await show_topics(message, state)
 
 
 async def show_all_messages(message: types.Message, state: FSMContext):
@@ -96,7 +106,12 @@ async def show_all_messages(message: types.Message, state: FSMContext):
 
         elif cur_user in receivers:
             # Выводим сообщения авторов
-            pass
+            for msg in topic.messages:
+                if msg.sender == author:
+                    answer += f"-> {msg.msg_text}\n"
+
+                if msg.sender == cur_user:
+                    answer += f"You: {msg.msg_text}\n"
         else:
             # Выводим только главное сообщение
             pass
@@ -117,7 +132,7 @@ async def return_to_topics(message: types.Message, state: FSMContext):
     #     else:
     await state.finish()
     await AppStates.showing_topics.set()
-    await show_topics(message, AppStates.showing_topics)
+    await show_topics(message, state)
 
 
 async def return_to_main_menu(message: types.Message, state: FSMContext):

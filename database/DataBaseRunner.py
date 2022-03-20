@@ -45,7 +45,9 @@ class DataBaseRunner:
         return self.session.query(dbe.Topic).filter(dbe.Topic.name == topic_name).first()
 
     def get_topics_as_addressor(self, username: str) -> Optional[List[dbe.Topic]]:
-        return self.session.query(dbe.Topic).filter()
+        topics = self.session.query(dbe.Topic).all()
+        user = self.get_user_by_username(username)
+        return list(filter(lambda topic: user in topic.addressees, topics))
 
     # def get_addressees(self, topic_name: str) -> Optional[List[dbe.User]]:
     #     """
