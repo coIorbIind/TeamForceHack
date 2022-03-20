@@ -26,6 +26,7 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     tgm_link = Column(Text)
+    chat_id = Column(Text)
 
     topics = relationship('Topic')
 
@@ -55,6 +56,7 @@ class Topic(Base):
     id = Column(Integer, primary_key=True)
     author_id = Column(Integer, ForeignKey('users.id'))
     name = Column(Text)
+    text = Column(Text)
 
     author = relationship('User', overlaps='topics', uselist=False)
     addressees = relationship('User', secondary=topic_user, backref='addresses')
