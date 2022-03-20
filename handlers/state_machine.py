@@ -21,15 +21,17 @@ class ShowTopic(StatesGroup):
     showing_topic = State()
     topic_func = State()
     enter_message = State()
+    enter_option_for_users = State()
+    addressees_for_add = State()
+    addressees_for_delete = State()
     # change_addressees = State()
     # send_message = State()
     # show_messages = State()
 
 
-class ChangeAddressees(StatesGroup):
-    """States for changing """
-    addressees_for_add = State()
-    addressees_for_delete = State()
+# class ChangeAddressees(StatesGroup):
+#     addressees_for_add = State()
+#     addressees_for_delete = State()
 
 
 class SendMessageToTopic(StatesGroup):
