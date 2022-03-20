@@ -4,7 +4,6 @@ from keyboards.keyboards import main_keyboard
 from .state_machine import CreateTopic
 from database.DataBaseRunner import DataBaseRunner
 
-
 db_runner = DataBaseRunner()
 global_bot: Bot = None
 
@@ -62,7 +61,7 @@ async def enter_addressees(message: types.Message, state: FSMContext) -> None:
 
         targ_receivers = topic.addressees
 
-        text = f"#{topic.name}\n\n{topic.text}"
+        text = f"#{topic.name}\n\n{topic.text}\n\n"  # \n\nАвтор: @{topic.author.tgm_link}
         for receiver in targ_receivers:
             t_chat_id = receiver.chat_id
 
@@ -95,4 +94,3 @@ def register_create_handlers(dp: Dispatcher, bot: Bot) -> None:
     dp.register_message_handler(enter_name, state=CreateTopic.topic_name)
     dp.register_message_handler(enter_message, state=CreateTopic.message)
     dp.register_message_handler(enter_addressees, state=CreateTopic.addressees)
-

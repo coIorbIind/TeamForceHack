@@ -3,22 +3,20 @@ from aiogram import types, Bot
 from aiogram.dispatcher.filters import Text
 
 from keyboards.keyboards import topics_keyboard, topic_info_keyboard, main_keyboard
-from database.DataBaseRunner import DataBaseRunner, dbe
+from database.DataBaseRunner import DataBaseRunner
 from .state_machine import ShowTopic, AppStates
-from copy import deepcopy
 
 db_runner = DataBaseRunner()
 global_dispatcher: Dispatcher = None
 global_bot: Bot = None
 
 
-async def show_topics(message: types.Message) -> None:
+async def show_topics(message: types.Message, state: FSMContext) -> None:
     """
     Function to view the list of topics
     :param message: message from user
     """
     topics = db_runner.get_topics(message.from_user.username)
-    topics += db_runner(get_topic
     if topics is None:
         await message.answer("Вы ещё не создали ни одной темы")
     else:
@@ -31,6 +29,7 @@ async def show_topics(message: types.Message) -> None:
 
 
 async def topic_info(message: types.Message, state: FSMContext):
+    """Function for getting info about current topic"""
     receivers = ""
 
     topic = db_runner.get_topic_by_name(message.text)
@@ -51,12 +50,14 @@ async def topic_info(message: types.Message, state: FSMContext):
 
 # async def change
 async def send_message(message: types.Message, state: FSMContext):
+    """Function for sending message to the author"""
     if message.text == "Отправить сообщение":
         await ShowTopic.next()
         await message.answer("Введите текст сообщения для рассылки", reply_markup=types.ReplyKeyboardRemove())
 
 
 async def enter_message(message: types.Message, state: FSMContext):
+    """Function for entering topic name for sending message"""
     async with state.proxy() as data:
         # print(data)
         topic = db_runner.get_topic_by_name(data['topic'])
@@ -66,7 +67,7 @@ async def enter_message(message: types.Message, state: FSMContext):
         targ_receivers = topic.addressees
         # print(topic.addressees)
 
-        text = f"#{topic.name}\n\n{message.text}"
+        text = f"#{topic.name}\n\n{message.text}"  # \n\nАвтор: @{topic.author.tgm_link}
         for receiver in targ_receivers:
             t_chat_id = receiver.chat_id
             await global_bot.send_message(chat_id=t_chat_id, text=text)
@@ -74,7 +75,10 @@ async def enter_message(message: types.Message, state: FSMContext):
     await message.answer("Сообщение отправлено")
     await state.finish()
     await AppStates.showing_topics.set()
-    await show_topics(message, AppStates.showing_topics)
+
+    await state.set_state(AppStates.showing_topics.state)
+
+    await show_topics(message, state)
 
 
 async def show_all_messages(message: types.Message, state: FSMContext):
@@ -117,7 +121,9 @@ async def return_to_topics(message: types.Message, state: FSMContext):
     #     else:
     await state.finish()
     await AppStates.showing_topics.set()
-    await show_topics(message, AppStates.showing_topics)
+
+    await state.set_state(AppStates.showing_topics.state)
+    await show_topics(message, state)
 
 
 async def return_to_main_menu(message: types.Message, state: FSMContext):

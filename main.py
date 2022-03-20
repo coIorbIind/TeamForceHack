@@ -9,7 +9,6 @@ from handlers import create_topic_handlers, other, show_topics_handlers, start_h
 from sys import exit
 
 
-#from handlers import other, client
 from config import load_config
 from config_classes import BotConfig
 
