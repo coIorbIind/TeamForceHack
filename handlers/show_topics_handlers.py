@@ -115,10 +115,7 @@ async def show_all_messages(message: types.Message, state: FSMContext):
 
 
 async def return_to_topics(message: types.Message, state: FSMContext):
-    # async with state.proxy() as data:
-    #     if data.get("topic") is None:
-    #         pass
-    #     else:
+    """Function to return to topic list"""
     await state.finish()
     await AppStates.showing_topics.set()
 
@@ -127,6 +124,7 @@ async def return_to_topics(message: types.Message, state: FSMContext):
 
 
 async def return_to_main_menu(message: types.Message, state: FSMContext):
+    """Function to return to main menu"""
     await state.finish()
     await message.answer("Главное меню", reply_markup=main_keyboard())
 

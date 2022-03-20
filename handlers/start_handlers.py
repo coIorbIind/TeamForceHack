@@ -19,11 +19,13 @@ async def start_command(message: types.Message) -> None:
 
 
 async def go_to_show_topics(message: types.Message) -> None:
+    """Function redirecting to topic list"""
     await AppStates.showing_topics.set()
     await show_topics(message, AppStates.showing_topics)
 
 
 async def go_to_send_message(message: types.Message) -> None:
+    """Function redirecting to topic sending message"""
     await SendMessageToTopic.enter_topic.set()
     await message.answer("Для выхода из режима заполнения топика введите команду /cancel")
     await message.answer("Введите название топика", reply_markup=types.ReplyKeyboardRemove())

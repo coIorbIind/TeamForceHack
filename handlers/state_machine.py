@@ -2,6 +2,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 
 class AppStates(StatesGroup):
+    """Main state Machine"""
     #start_state = State() # Нужно ли?
     adding_topic = State()
     showing_topics = State()
@@ -16,6 +17,7 @@ class CreateTopic(StatesGroup):
 
 
 class ShowTopic(StatesGroup):
+    """Topic info states"""
     showing_topic = State()
     topic_func = State()
     enter_message = State()
@@ -25,6 +27,7 @@ class ShowTopic(StatesGroup):
 
 
 class ChangeAddressees(StatesGroup):
+    """States for changing """
     addressees_for_add = State()
     addressees_for_delete = State()
 
