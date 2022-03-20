@@ -3,7 +3,7 @@ from aiogram.dispatcher import Dispatcher
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils.exceptions import NetworkError
-from handlers import create_topic_handlers, other, show_topics_handlers, start_handlers
+from handlers import create_topic_handlers, other, show_topics_handlers, start_handlers, send_message_handlers
 
 
 from sys import exit
@@ -49,15 +49,16 @@ def main():
     create_topic_handlers.register_create_handlers(dp, bot)
     show_topics_handlers.register_show_topics_handlers(dp, bot)
     start_handlers.register_start_handlers(dp)
+    send_message_handlers.register_send_message_handlers(dp, bot)
     # client.register_admin_handlers(dp)
     other.register_other_handlers(dp)
 
     # Запуск поллинга
-    # try:
-    executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
-    #
-    # except NetworkError:
-    #     exit("[ERROR] No connection")
+    try:
+        executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
+
+    except NetworkError:
+        exit("[ERROR] No connection")
 
 
 if __name__ == "__main__":

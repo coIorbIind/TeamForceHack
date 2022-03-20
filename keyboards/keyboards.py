@@ -8,10 +8,12 @@ def main_keyboard() -> ReplyKeyboardMarkup:
     """
     add_button = KeyboardButton("Добавить тему")
     view_button = KeyboardButton("Просмотреть все свои темы")
+    send_message_button = KeyboardButton("Написать сообщение в тему")
     #change_addressees_button = KeyboardButton("Изменить адресатов")
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(add_button)
     keyboard.add(view_button)
+    keyboard.add(send_message_button)
     #keyboard.add(change_addressees_button)
     return keyboard
 
@@ -54,10 +56,12 @@ def topic_info_keyboard() -> ReplyKeyboardMarkup:
     add_button = KeyboardButton("Изменить адресатов")
     view_button = KeyboardButton("Просмотреть все сообщения темы")
     send_message = KeyboardButton("Отправить сообщение")
+    exit_button = KeyboardButton("Вернуться к списку тем")
     #change_addressees_button = KeyboardButton("Изменить адресатов")
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(add_button)
     keyboard.add(view_button)
     keyboard.add(send_message)
+    keyboard.add(exit_button)
     #keyboard.add(change_addressees_button)
     return keyboard

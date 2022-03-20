@@ -29,9 +29,13 @@ class User(Base):
     chat_id = Column(Text)
 
     topics = relationship('Topic')
+    topics_listener = relationship('Topic', secondary=topic_user, backref='topics_listener')
 
     def __repr__(self):
         return f"User(id={self.id}, tgm_link={self.tgm_link}, topics={self.topics})"
+
+    def __eq__(self, other: 'User'):
+        return self.tgm_link == other.tgm_link
 
 
 class Message(Base):
@@ -60,6 +64,7 @@ class Topic(Base):
 
     author = relationship('User', overlaps='topics', uselist=False)
     addressees = relationship('User', secondary=topic_user, backref='addresses')
+    messages = relationship('Message', overlaps='topics')
 
     def __repr__(self):
         return f"Topic(id={self.id}, author_id={self.author_id}, author={self.author}," \

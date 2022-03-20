@@ -72,10 +72,27 @@ async def enter_addressees(message: types.Message, state: FSMContext) -> None:
     await state.finish()
 
 
+async def cancel_handler(message: types.Message, state: FSMContext) -> None:
+    """
+    The function that handles the cancellation of data entry. Resets the state machine
+    :param message: message from user
+    :param state: current FSM state
+    :return: no factory reset if state is empty
+    """
+    current_state = await state.get_state()
+    if current_state is None:
+        await message.answer("Нечего отменять!")
+        return
+    await state.finish()
+    await message.answer("Действия отменены", reply_markup=main_keyboard())
+
+
 def register_create_handlers(dp: Dispatcher, bot: Bot) -> None:
+    dp.register_message_handler(cancel_handler, state="*", commands=['cancel'])
     global global_bot
     global_bot = bot
     dp.register_message_handler(create_topic, lambda message: message.text == "Добавить тему")
     dp.register_message_handler(enter_name, state=CreateTopic.topic_name)
     dp.register_message_handler(enter_message, state=CreateTopic.message)
     dp.register_message_handler(enter_addressees, state=CreateTopic.addressees)
+
