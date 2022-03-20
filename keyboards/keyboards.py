@@ -48,6 +48,7 @@ def change_addressees_keyboard(flag: bool) -> ReplyKeyboardMarkup:
     add_button = KeyboardButton("Добавить получателей")
 
     keyboard.add(add_button)
+    keyboard.add(KeyboardButton("Вернуться к списку тем"))
 
     return keyboard
 
